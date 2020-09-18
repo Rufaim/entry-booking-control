@@ -1,0 +1,56 @@
+syntax="proto3";
+
+option go_package = "cmd/message";
+
+package message;
+
+message Void {}
+
+message User {
+    string id = 1;
+}
+
+enum Weekday {
+    Mon = 0;
+    Tue = 1;	
+    Wed = 2;
+    Thu = 3;
+    Fri = 4;
+}
+
+message Visit {
+    Weekday day = 1;
+    string timestamp = 2;
+}
+
+message UserStat {
+    User user = 1;
+    repeated Visit visits = 2;
+}
+
+message AllUsersStat {
+    repeated UserStat stat = 1;
+    map<string, uint32> bookingAmount = 2;
+}
+
+message UserVisitSet {
+    User user = 1;
+    Weekday day = 2;
+    string timestamp = 3;
+}
+
+message UserVisitSetResult {
+    enum Result {
+        OK = 0;
+        FAILURE = 1;
+    }
+    Result status = 1;
+    string text = 2;
+}
+
+service LabVisitsService {
+    rpc SetUserVisit (UserVisitSet) returns (UserVisitSetResult);
+    rpc DelUserVisit (UserVisitSet) returns (UserVisitSetResult);
+    rpc GetVisits (User) returns (UserStat);
+    rpc GetAllVisitsReport (Void) returns (AllUsersStat);
+}
